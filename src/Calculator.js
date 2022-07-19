@@ -1,90 +1,33 @@
-import React, {useState} from 'react';
-import {Button, SafeAreaView, ScrollView, Text, TouchableOpacity, View} from "react-native";
+import React, {useRef, useState} from 'react';
+import { SafeAreaView, ScrollView, Text, TouchableOpacity, View} from "react-native";
 import styles from "./Styles";
-import {useColorScheme} from "react-native";
 import {Icon} from "@rneui/themed";
-
 
 function Calculator() {
 
-
-    const [firstPart, setFirstPart] = useState('');
-    const [secondPart, setSecondPart] = useState("");
     const [first, setFirst] = useState('');
     const [displayResult, setDisplayResult] = useState(null);
     const [count, setCount] = useState('');
     const [sign, setSign] = useState('');
-    const [dot, setDot] = useState('');
     const [numbers, setNumbers] = useState([]);
     const [darkMode, setDarkMode] = useState(true);
     const number = (num) => {
-     /* if (dot === true) {
-            if (count === 0) {
-                setCount((count * (10 / 10 * 1)) + (num / Math.pow(10, decimalCount(count) + 1)))
-            } else
-                setCount((count * (10 / 10 * 1)) + (num / Math.pow(10, decimalCount(count) + 1)))
-        } else {     }
-        */
+
         setCount(count + "" + num);
     }
 
     const ClearOne = () => {
 
-        if(count==="" && first==="") return;
+        if (count === "" && first === "") return;
 
         setCount(count.slice(0, -1))
-        if(first != '' && count==="" ){
+        if (first != '' && count === "") {
             setSign('')
             setCount(first)
             setFirst('')
         }
 
-      /*  const temp = count.toString();
-        const lastNum = parseInt(temp[temp.length - 1]);
-        if (dot === true) {
-// THis part deletes the decimal numbers (after the dot(.))!
-            setCount((count * (10 / 10 * 1)) - (lastNum / Math.pow(10, decimalCount(count))))
-            if (decimalCount(count) === 1) {
-                setDot(false);
-            }
-        } else {
-            if (first != 0) {
-                const value = count;
-                const lastDigit = count % 10;
-                setCount((value / 10) - (lastDigit / 10))
-                if (count.toString().length === 1 || count.toString().length === 0) {
-                    setCount('')
-                }
-                if (count.toString() === '') {
-                    setSign('')
 
-                }
-                if (count.toString() === '' && sign === '') {
-                    setCount(first * 1)
-                    setFirst('')
-                    if (decimalCount(count) > 0) {
-                        decimalCount(count);
-                        const temp = count.toString();
-                        const lastNum = parseInt(temp[temp.length - 1]);
-                        setCount((count * (10 / 10 * 1)) - (lastNum / Math.pow(10, decimalCount(count))))
-                        if (decimalCount(count) === 0) {
-                            setDot(false);
-                        }
-                    }
-                    if (dot === false) {
-                        const value = count;
-                        const lastDigit = count % 10;
-                        setCount((value / 10) - (lastDigit / 10))
-
-                    }
-                }
-            } else {
-                const value = count;
-                const lastDigit = count % 10;
-
-                setCount((value / 10) - (lastDigit / 10))
-            }
-        }*/
     }
     const ClearAll = () => {
         setCount('');
@@ -134,42 +77,28 @@ function Calculator() {
     const onEqualPress = () => {
 
 
-
-        if(first!= "" && first !="."&& count != '' && count!=".") {
+        if (first != "" && first != "." && count != '' && count != ".") {
             let sum;
             if (sign === "+") {
-                setCount(sum = (parseFloat(first) + parseFloat(count)).toString())
+                setCount(sum = floatify(parseFloat(first) + parseFloat(count)).toString())
 
             } else if (sign === "-") {
-                setCount(sum = (parseFloat(first) - parseFloat(count)).toString())
+                setCount(sum = floatify(parseFloat(first) - parseFloat(count)).toString())
 
             } else if (sign === "/") {
-                setCount(sum = (parseFloat(first) / parseFloat(count)).toFixed(3).toString());
+                setCount(sum = floatify(parseFloat(first) / parseFloat(count)).toString());
             } else if (sign === "%") {
-                setCount(sum = ((parseFloat(first) / parseFloat(count)) * 100).toString());
+                setCount(sum = floatify((parseFloat(first) / parseFloat(count) * 100)).toString());
             } else if (sign === "*") {
-                setCount(sum = ((parseFloat(first) * parseFloat(count))).toFixed(3).toString());
+                setCount(sum = floatify((parseFloat(first) * parseFloat(count))).toString());
             }
             setDisplayResult((displayResult || '') + ' ' + first + ' ' + sign + ' ' + count + ' = ' + sum + '\n')
             setSign('');
             setFirst('');
-        }else return;
+        } else return;
 
 
     }
-    const decimalCount = num => {
-        // Convert to String
-        const numStr = String(num);
-        // String Contains Decimal
-        if (numStr.includes('.')) {
-            return numStr.split('.')[1].length;
-        }
-        ;
-        // String Does Not Contain Decimal
-        return 0;
-        setNumbers([])
-    }
-
     const ThemeSwitch = () => {
         setDarkMode(false);
     }
@@ -177,25 +106,31 @@ function Calculator() {
         setDarkMode(true);
     }
 
+    function floatify(sum) {
+        return parseFloat((sum).toFixed(10));
+    }
+    const scrollViewRef = useRef();
 
     return (<SafeAreaView style={styles.container}>
         <View style={darkMode ? styles.OutputView : styles.OutputViewLight}>
             <View style={darkMode ? styles.OutputView1 : styles.OutputView1Light}>
                 <Text style={darkMode ? styles.TextResultsHistory : styles.LightTextResultsHistory}> Latest
                     Results: {"\n"}</Text>
-                <ScrollView style={darkMode ? styles.ScrollView : styles.ScrollViewLight}>
+                <ScrollView
+                    ref={scrollViewRef}
+                    onContentSizeChange={() => scrollViewRef.current.scrollToEnd({ animated: true })}
+                    style={darkMode ? styles.ScrollView : styles.ScrollViewLight}>
                     <Text style={darkMode ? styles.outputNumRes1 : styles.outputNumRes1Light}>
                         {displayResult}
                     </Text>
                 </ScrollView>
-
                 <TouchableOpacity style={darkMode ? styles.LightButton : styles.LightButtonLight} onPress={ThemeSwitch}><Icon
                     name='sunny' type='ionicon' color="#fff"/></TouchableOpacity>
                 <TouchableOpacity style={darkMode ? styles.DarkButton : styles.DarkButtonLight}
                                   onPress={ThemeSwitch1}><Icon name='moon' type='ionicon'/></TouchableOpacity>
             </View>
             <Text style={darkMode ? styles.outputNum : styles.outputNumLight}>
-                {firstPart + "" + secondPart} {first} {sign} {count}
+                {first} {sign} {count}
             </Text>
         </View>
         <View style={darkMode ? styles.InputViewDark : styles.InputView_Light}>
