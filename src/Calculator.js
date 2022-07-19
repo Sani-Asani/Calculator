@@ -5,96 +5,88 @@ import {Icon} from "@rneui/themed";
 
 function Calculator() {
 
-    const [first, setFirst] = useState('');
+    const [firstNum, setFirstNum] = useState('');
+    const [currentNum, setCurrentNum] = useState('');
     const [displayResult, setDisplayResult] = useState(null);
-    const [count, setCount] = useState('');
     const [sign, setSign] = useState('');
-    const [numbers, setNumbers] = useState([]);
     const [darkMode, setDarkMode] = useState(true);
     const number = (num) => {
 
-        setCount(count + "" + num);
+        setCurrentNum(currentNum + "" + num);
     }
 
     const ClearOne = () => {
+        if (currentNum === "" && firstNum === "") return;
 
-        if (count === "" && first === "") return;
-
-        setCount(count.slice(0, -1))
-        if (first != '' && count === "") {
+        setCurrentNum(currentNum.slice(0, -1))
+        if (firstNum != '' && currentNum === "") {
             setSign('')
-            setCount(first)
-            setFirst('')
+            setCurrentNum(firstNum)
+            setFirstNum('')
         }
-
 
     }
     const ClearAll = () => {
-        setCount('');
+        setCurrentNum('');
         setSign('');
-        setFirst('');
+        setFirstNum('');
     }
     const onPlusClicked = () => {
         setSign("+")
-        setFirst(count)
-        setCount("")
-
+        setFirstNum(currentNum)
+        setCurrentNum("")
     }
     const onMinusClicked = () => {
-        setFirst(count)
+        setFirstNum(currentNum)
         setSign('-');
-        setCount('');
+        setCurrentNum('');
     }
     const onTimesPress = () => {
-
         setSign('*');
-        setFirst(count);
-        setCount('');
-
+        setFirstNum(currentNum);
+        setCurrentNum('');
     }
     const onDividePress = () => {
         setSign('/')
-        setFirst(count)
-        setCount('')
-
+        setFirstNum(currentNum)
+        setCurrentNum('')
     }
     const onPercentagePress = () => {
         setSign('%');
-        setFirst(count);
-        setCount('');
-
+        setFirstNum(currentNum);
+        setCurrentNum('');
     }
     const onDotClicked = () => {
-        if (count.includes('.'))
+        if (currentNum.includes('.'))
             return;
-        setCount(count + '.');
+        setCurrentNum(currentNum + '.');
         return;
-
     }
     const onPMPress = () => {
-        setCount(count * (-1))
+        setCurrentNum(currentNum * (-1))
     }
     const onEqualPress = () => {
-
-
-        if (first != "" && first != "." && count != '' && count != ".") {
+        if (firstNum != "" && firstNum != "." && currentNum != '' && currentNum != ".") {
             let sum;
             if (sign === "+") {
-                setCount(sum = floatify(parseFloat(first) + parseFloat(count)).toString())
+                setCurrentNum(sum = floatify(parseFloat(firstNum) + parseFloat(currentNum)).toString())
 
             } else if (sign === "-") {
-                setCount(sum = floatify(parseFloat(first) - parseFloat(count)).toString())
+                setCurrentNum(sum = floatify(parseFloat(firstNum) - parseFloat(currentNum)).toString())
 
             } else if (sign === "/") {
-                setCount(sum = floatify(parseFloat(first) / parseFloat(count)).toString());
+                setCurrentNum(sum = floatify(parseFloat(firstNum) / parseFloat(currentNum)).toString());
+
             } else if (sign === "%") {
-                setCount(sum = floatify((parseFloat(first) / parseFloat(count) * 100)).toString());
+                setCurrentNum(sum = floatify((parseFloat(firstNum) / parseFloat(currentNum) * 100)).toString());
+
             } else if (sign === "*") {
-                setCount(sum = floatify((parseFloat(first) * parseFloat(count))).toString());
+                setCurrentNum(sum = floatify((parseFloat(firstNum) * parseFloat(currentNum))).toString());
+
             }
-            setDisplayResult((displayResult || '') + ' ' + first + ' ' + sign + ' ' + count + ' = ' + sum + '\n')
+            setDisplayResult((displayResult || '') + ' ' + firstNum + ' ' + sign + ' ' + currentNum + ' = ' + sum + '\n')
             setSign('');
-            setFirst('');
+            setFirstNum('');
         } else return;
 
 
@@ -130,7 +122,7 @@ function Calculator() {
                                   onPress={ThemeSwitch1}><Icon name='moon' type='ionicon'/></TouchableOpacity>
             </View>
             <Text style={darkMode ? styles.outputNum : styles.outputNumLight}>
-                {first} {sign} {count}
+                {firstNum} {sign} {currentNum}
             </Text>
         </View>
         <View style={darkMode ? styles.InputViewDark : styles.InputView_Light}>
@@ -160,7 +152,7 @@ function Calculator() {
             </View>
             <View style={styles.Rows}>
                 <TouchableOpacity onPress={() => {
-                    setCount(number("7"));
+                    setCurrentNum(number("7"));
                     console.log(number(7))
                 }}>
                     <Text style={darkMode ? styles.NumButtons : styles.NumButtonsLight}>
@@ -168,7 +160,7 @@ function Calculator() {
                     </Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => {
-                    setCount(number("8"));
+                    setCurrentNum(number("8"));
                     console.log(number(8))
                 }}>
                     <Text style={darkMode ? styles.NumButtons : styles.NumButtonsLight}>
@@ -176,7 +168,7 @@ function Calculator() {
                     </Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => {
-                    setCount(number("9"));
+                    setCurrentNum(number("9"));
                     console.log(number(9))
                 }}>
                     <Text style={darkMode ? styles.NumButtons : styles.NumButtonsLight}>
@@ -191,7 +183,7 @@ function Calculator() {
             </View>
             <View style={styles.Rows}>
                 <TouchableOpacity onPress={() => {
-                    setCount(number("4"));
+                    setCurrentNum(number("4"));
                     console.log(number(4))
                 }}>
                     <Text style={darkMode ? styles.NumButtons : styles.NumButtonsLight}>
@@ -199,7 +191,7 @@ function Calculator() {
                     </Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => {
-                    setCount(number("5"));
+                    setCurrentNum(number("5"));
                     console.log(number(5))
                 }}>
                     <Text style={darkMode ? styles.NumButtons : styles.NumButtonsLight}>
@@ -207,7 +199,7 @@ function Calculator() {
                     </Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => {
-                    setCount(number("6"));
+                    setCurrentNum(number("6"));
                     console.log(number(6))
                 }}>
                     <Text style={darkMode ? styles.NumButtons : styles.NumButtonsLight}>
@@ -222,7 +214,7 @@ function Calculator() {
             </View>
             <View style={styles.Rows}>
                 <TouchableOpacity onPress={() => {
-                    setCount(number("1"));
+                    setCurrentNum(number("1"));
                     console.log(number(1));
                 }}>
                     <Text style={darkMode ? styles.NumButtons : styles.NumButtonsLight}>
@@ -231,7 +223,7 @@ function Calculator() {
                 </TouchableOpacity>
                 <TouchableOpacity
                     onPress={() => {
-                        setCount(number("2"));
+                        setCurrentNum(number("2"));
                         console.log(number(2))
                     }}>
                     <Text style={darkMode ? styles.NumButtons : styles.NumButtonsLight}>
@@ -239,7 +231,7 @@ function Calculator() {
                     </Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => {
-                    setCount(number("3"));
+                    setCurrentNum(number("3"));
                     console.log(number(3))
                 }}>
                     <Text style={darkMode ? styles.NumButtons : styles.NumButtonsLight}>
@@ -254,7 +246,7 @@ function Calculator() {
             </View>
             <View style={styles.Rows}>
                 <TouchableOpacity onPress={() => {
-                    setCount(number("0"));
+                    setCurrentNum(number("0"));
                     console.log(number(0))
                 }}>
                     <Text style={darkMode ? styles.NumButtons0 : styles.NumButtons0Light}>
