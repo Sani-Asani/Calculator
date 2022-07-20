@@ -1,7 +1,8 @@
 import React, {useRef, useState} from 'react';
-import { SafeAreaView, ScrollView, Text, TouchableOpacity, View} from "react-native";
+import {SafeAreaView, ScrollView, Text, TouchableOpacity, View} from "react-native";
 import styles from "./Styles";
 import {Icon} from "@rneui/themed";
+import {getLastResult, floatify} from "./utils/helper";
 
 function Calculator() {
 
@@ -11,7 +12,6 @@ function Calculator() {
     const [sign, setSign] = useState('');
     const [darkMode, setDarkMode] = useState(true);
     const number = (num) => {
-
         setCurrentNum(currentNum + "" + num);
     }
 
@@ -32,39 +32,74 @@ function Calculator() {
         setFirstNum('');
     }
     const onPlusClicked = () => {
-        setSign("+")
-        setFirstNum(currentNum)
-        setCurrentNum("")
+        if (!currentNum) return;
+        if (sign && sign !== '+') {
+            setFirstNum(getLastResult(firstNum, sign, currentNum));
+        } else {
+            setFirstNum(firstNum ? floatify(parseFloat(firstNum) + parseFloat(currentNum)).toString() : currentNum)
+        }
+
+        setCurrentNum('');
+        setSign('+');
+
     }
+
     const onMinusClicked = () => {
-        setFirstNum(currentNum)
+        if (!currentNum) return;
+
+        if (sign && sign !== '-') {
+            setFirstNum(getLastResult(firstNum, sign, currentNum));
+        } else {
+            setFirstNum(firstNum ? floatify(parseFloat(firstNum) - parseFloat(currentNum)).toString() : currentNum)
+        }
+
+        setCurrentNum('');
         setSign('-');
-        setCurrentNum('');
     }
+
     const onTimesPress = () => {
-        setSign('*');
-        setFirstNum(currentNum);
+        if (!currentNum) return;
+        if (sign && sign !== '*') {
+            setFirstNum(getLastResult(firstNum, sign, currentNum));
+        } else {
+            setFirstNum(firstNum ? floatify(parseFloat(firstNum) * parseFloat(currentNum)).toString() : currentNum)
+        }
+
         setCurrentNum('');
+        setSign('*');
     }
+
     const onDividePress = () => {
-        setSign('/')
-        setFirstNum(currentNum)
-        setCurrentNum('')
+        if (!currentNum) return;
+        if (sign && sign !== '/') {
+            setFirstNum(getLastResult(firstNum, sign, currentNum));
+        } else {
+            setFirstNum(firstNum ? floatify(parseFloat(firstNum) / parseFloat(currentNum)).toString() : currentNum)
+        }
+
+        setCurrentNum('');
+        setSign('/');
     }
+
     const onPercentagePress = () => {
+        if (!currentNum) return;
         setSign('%');
         setFirstNum(currentNum);
         setCurrentNum('');
     }
+
     const onDotClicked = () => {
         if (currentNum.includes('.'))
             return;
         setCurrentNum(currentNum + '.');
         return;
     }
+
     const onPMPress = () => {
+        if (!currentNum) return;
         setCurrentNum(currentNum * (-1))
     }
+
     const onEqualPress = () => {
         if (firstNum != "" && firstNum != "." && currentNum != '' && currentNum != ".") {
             let sum;
@@ -91,16 +126,16 @@ function Calculator() {
 
 
     }
+
     const ThemeSwitch = () => {
         setDarkMode(false);
     }
+
     const ThemeSwitch1 = () => {
         setDarkMode(true);
     }
 
-    function floatify(sum) {
-        return parseFloat((sum).toFixed(10));
-    }
+
     const scrollViewRef = useRef();
 
     return (<SafeAreaView style={styles.container}>
@@ -110,7 +145,7 @@ function Calculator() {
                     Results: {"\n"}</Text>
                 <ScrollView
                     ref={scrollViewRef}
-                    onContentSizeChange={() => scrollViewRef.current.scrollToEnd({ animated: true })}
+                    onContentSizeChange={() => scrollViewRef.current.scrollToEnd({animated: true})}
                     style={darkMode ? styles.ScrollView : styles.ScrollViewLight}>
                     <Text style={darkMode ? styles.outputNumRes1 : styles.outputNumRes1Light}>
                         {displayResult}
